@@ -1,0 +1,45 @@
+record(ai, "$(IOCNAME):$(QUEUE_CAPS)QueueHigh") {
+    field(DESC, "max # of elmts in IOC's $(QUEUE) queue")
+    field(SCAN, "I/O Intr")
+    field(DTYP, "IOC stats")
+    field(INP,  "@$(QUEUE)QueueHiWtrMrk")
+    field(PINI, "YES")
+    field(FLNK, "$(IOCNAME):$(QUEUE_CAPS)QueueHighPct")
+}
+
+record(calc, "$(IOCNAME):$(QUEUE_CAPS)QueueHighPct") {
+    field(DESC, "Max. usage of IOC's $(QUEUE) queue")
+    field(INPA, "$(IOCNAME):$(QUEUE_CAPS)QueueHigh NPP MS")
+    field(INPB, "$(IOCNAME):$(QUEUE_TYPE)QueueSize NPP MS")
+    field(CALC, "100*A/B")
+    field(LOPR, "0")
+    field(HOPR, "100")
+    field(EGU,  "%")
+}
+
+record(ai, "$(IOCNAME):$(QUEUE_CAPS)QueueUsed") {
+    field(DESC, "# of entries in IOC's $(QUEUE) queue")
+    field(SCAN, "I/O Intr")
+    field(DTYP, "IOC stats")
+    field(INP,  "@$(QUEUE)QueueUsed")
+    field(PINI, "YES")
+    field(FLNK, "$(IOCNAME):$(QUEUE_CAPS)QueueUsedPct")
+}
+
+record(calc, "$(IOCNAME):$(QUEUE_CAPS)QueueUsedPct") {
+    field(DESC, "Percentage of IOC's $(QUEUE) queue used")
+    field(INPA, "$(IOCNAME):$(QUEUE_CAPS)QueueUsed NPP MS")
+    field(INPB, "$(IOCNAME):$(QUEUE_TYPE)QueueSize NPP MS")
+    field(CALC, "100*A/B")
+    field(LOPR, "0")
+    field(HOPR, "100")
+    field(EGU,  "%")
+}
+
+record(ai, "$(IOCNAME):$(QUEUE_CAPS)QueueOverruns") {
+    field(DESC, "# of overruns of IOC's $(QUEUE) queue")
+    field(SCAN, "I/O Intr")
+    field(DTYP, "IOC stats")
+    field(INP,  "@$(QUEUE)QueueOverruns")
+    field(PINI, "YES")
+}

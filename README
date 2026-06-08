@@ -1,0 +1,6 @@
+meta-e3
+=======
+
+This meta layer packages e3 to be used systemwise on a yocto image. It
+replicates the conda packaging structure so both epics and epics-modules are on
+the root directory.

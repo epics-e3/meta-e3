@@ -1,0 +1,7 @@
+#- ### iocStats entry snippet ###
+#- ####################################################
+#- >> Mandatory
+#- IOC - Prefix for PVs
+#- ####################################################
+
+dbLoadRecords("iocAdminSoft-ess.db", "IOC=$(IOCNAME)")

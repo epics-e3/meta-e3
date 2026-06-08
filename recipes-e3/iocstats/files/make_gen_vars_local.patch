@@ -1,0 +1,50 @@
+diff --git a/iocAdmin/Db/epicsPVAEnvVars.substitutions b/iocAdmin/Db/epicsPVAEnvVars.substitutions
+index 77b39d7..9ef2821 100644
+--- a/iocAdmin/Db/epicsPVAEnvVars.substitutions
++++ b/iocAdmin/Db/epicsPVAEnvVars.substitutions
+@@ -10,19 +10,19 @@ file iocEnvVar.template
+ {
+     pattern
+     { ENVNAME                    , ENVVAR                           , ENVTYPE}
+-    { PVA_ADDR_LIST              , EPICS_PVA_ADDR_LIST              , env  }
+-    { PVA_AUTO_ADDR_LIST         , EPICS_PVA_AUTO_ADDR_LIST         , env  }
+-    { PVA_BEACON_PERIOD          , EPICS_PVA_BEACON_PERIOD          , env  }
+-    { PVA_CONN_TMO               , EPICS_PVA_CONN_TMO               , env  }
+-    { PVA_MAX_ARRAY_BYTES        , EPICS_PVA_MAX_ARRAY_BYTES        , env  }
+-    { PVA_MAX_SEARCH_PERIOD      , EPICS_PVA_MAX_SEARCH_PERIOD      , env  }
+-    { PVA_SERVER_PORT            , EPICS_PVA_SERVER_PORT            , env  }
++    { #PVA_ADDR_LIST              , EPICS_PVA_ADDR_LIST              , env  }
++    { #PVA_AUTO_ADDR_LIST         , EPICS_PVA_AUTO_ADDR_LIST         , env  }
++    { #PVA_BEACON_PERIOD          , EPICS_PVA_BEACON_PERIOD          , env  }
++    { #PVA_CONN_TMO               , EPICS_PVA_CONN_TMO               , env  }
++    { #PVA_MAX_ARRAY_BYTES        , EPICS_PVA_MAX_ARRAY_BYTES        , env  }
++    { #PVA_MAX_SEARCH_PERIOD      , EPICS_PVA_MAX_SEARCH_PERIOD      , env  }
++    { #PVA_SERVER_PORT            , EPICS_PVA_SERVER_PORT            , env  }
+ 
+-    { PVAS_INTF_ADDR_LIST        , EPICS_PVAS_INTF_ADDR_LIST        , env  }
+-    { PVAS_BEACON_ADDR_LIST      , EPICS_PVAS_BEACON_ADDR_LIST      , env  }
+-    { PVAS_AUTO_BEACON_ADDR_LIST , EPICS_PVAS_AUTO_BEACON_ADDR_LIST , env  }
+-    { PVAS_BEACON_PERIOD         , EPICS_PVAS_BEACON_PERIOD         , env  }
+-    { PVAS_BROADCAST_PORT        , EPICS_PVAS_BROADCAST_PORT        , env  }
+-    { PVAS_PROVIDER_NAMES        , EPICS_PVAS_PROVIDER_NAMES        , env  }
+-    { PVAS_SERVER_PORT           , EPICS_PVAS_SERVER_PORT           , env  }
++    { #PVAS_INTF_ADDR_LIST        , EPICS_PVAS_INTF_ADDR_LIST        , env  }
++    { #PVAS_BEACON_ADDR_LIST      , EPICS_PVAS_BEACON_ADDR_LIST      , env  }
++    { #PVAS_AUTO_BEACON_ADDR_LIST , EPICS_PVAS_AUTO_BEACON_ADDR_LIST , env  }
++    { #PVAS_BEACON_PERIOD         , EPICS_PVAS_BEACON_PERIOD         , env  }
++    { #PVAS_BROADCAST_PORT        , EPICS_PVAS_BROADCAST_PORT        , env  }
++    { #PVAS_PROVIDER_NAMES        , EPICS_PVAS_PROVIDER_NAMES        , env  }
++    { #PVAS_SERVER_PORT           , EPICS_PVAS_SERVER_PORT           , env  }
+ }
+diff --git a/iocAdmin/Db/genSiteEnvVars.pl b/iocAdmin/Db/genSiteEnvVars.pl
+index aef2ccb..297174f 100644
+--- a/iocAdmin/Db/genSiteEnvVars.pl
++++ b/iocAdmin/Db/genSiteEnvVars.pl
+@@ -24,6 +24,6 @@ my %varcount;
+ my @unique_vars = grep { not $varcount{$_}++ } @epics_vars;
+ 
+ foreach (@unique_vars) {
+-    print "{ $_, EPICS_$_, epics }\n"
++    print "{ #$_, EPICS_$_, epics }\n"
+ }
+ print("}\n");

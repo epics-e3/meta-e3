@@ -1,0 +1,39 @@
+#==============================================================================
+#
+# Abs:  IOC Administration Records for Soft IOCs
+#
+# Name: iocAdminSoft-ess.substitutions
+#
+#==============================================================================
+#
+global { IOCNAME=$(IOC) }
+
+file "iocGeneralTime.template"
+{
+pattern {""}
+        {""}
+}
+
+file "ioc.template"
+{
+pattern { TODFORMAT            }
+	{ "%Y-%m-%dT%H:%M:%S+01:00"}
+}
+
+file "siteEnvVars.db"
+{
+pattern {""}
+        {""}
+}
+
+file "epicsPVAEnvVars.db"
+{
+pattern {""}
+        {""}
+}
+
+file "iocEnvVar.template"
+{
+pattern { ENVNAME                    , ENVVAR                              , ENVTYPE}
+        { IOCVERSION                 , IOCVERSION                          , env    }
+}
