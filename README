@@ -4,3 +4,73 @@ meta-e3
 This meta layer packages e3 to be used systemwise on a yocto image. It
 replicates the conda packaging structure so both epics and epics-modules are on
 the root directory.
+
+Maintainer
+----------
+
+Lucas A. M. Magalhães <lucas.magalhaes@ess.eu>
+
+Contributing
+------------
+
+Send patches as pull requests to https://github.com/epics-e3/meta-e3.
+
+Building locally
+----------------
+
+CI is driven by kas; the kas files in `.ci/kas/` are the single source of
+truth for layers, revisions and configuration, and work the same locally.
+
+Prerequisites: a Linux host with Docker or Podman (for `kas-container`, which
+uses the same ghcr.io/siemens/kas/kas image as CI), or the Yocto host
+packages for plain `kas`. Install kas with `pip install kas==5.5`.
+
+The kas files compose with `:`; `base.yml` must come first:
+
+  - `base.yml`           bitbake + openembedded-core (kirkstone), qemux86-64,
+                         nodistro, meta-e3. Pinned by `base.lock.yml`.
+  - `qemuppc64.yml`      big-endian ppc64.
+  - `sstate-mirror.yml`  Yocto Project sstate mirror and hash equivalence
+                         server, rm_work and disk monitoring (build job).
+  - `check-layer.yml`    keeps meta-e3 out of bblayers.conf for
+                         yocto-check-layer.
+
+Set `KAS_WORK_DIR` to a directory outside this repository (CI does the
+same); otherwise kas checks out bitbake, oe-core and the build directory
+inside it:
+
+    export KAS_WORK_DIR=$HOME/kas-work/meta-e3 && mkdir -p "$KAS_WORK_DIR"
+
+Run the CI jobs locally from the root of this repository (`kas-container`
+mounts it as /repo; with plain `kas`, use `$PWD/.ci/...` instead):
+
+    # check-layer
+    kas-container shell .ci/kas/base.yml:.ci/kas/check-layer.yml \
+        -c /repo/.ci/scripts/check-layer.sh
+
+    # recipes affected by your branch (what the build job builds; it builds
+    # require when this is empty)
+    kas-container shell .ci/kas/base.yml -c \
+        "/repo/.ci/scripts/changed-recipes.py $(.ci/scripts/changed-files.sh origin/main | tr '\n' ' ')"
+
+    # build, e.g. for big-endian ppc64
+    kas-container shell .ci/kas/base.yml:.ci/kas/qemuppc64.yml:.ci/kas/sstate-mirror.yml \
+        -c "bitbake iocstats"
+
+    # lint (configuration in .oelint.cfg)
+    pip install oelint-adv==9.11.2
+    oelint-adv recipes-e3/*/*.bb
+
+For an interactive shell drop `-c ...`. Builds go to `build/` under
+`KAS_WORK_DIR`; task logs are in
+`build/tmp/work/*/<recipe>/*/temp/log.do_*`.
+
+Bumping the layer pins
+----------------------
+
+`base.yml` follows a release tag and `base.lock.yml` pins the exact commits.
+To move to a new point release, in a dedicated pull request:
+
+  1. Change `tag:` of bitbake and openembedded-core in `.ci/kas/base.yml`.
+  2. Regenerate the lock file: `kas-container lock --update .ci/kas/base.yml`
+  3. Commit both files.
