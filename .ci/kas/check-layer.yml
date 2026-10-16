@@ -1,0 +1,11 @@
+# Overlay for yocto-check-layer. Use as base.yml:check-layer.yml
+#
+# yocto-check-layer skips a layer that is already in BBLAYERS, so keep
+# meta-e3 checked out but out of bblayers.conf; the script adds it itself.
+header:
+  version: 23
+
+repos:
+  meta-e3:
+    layers:
+      .: disabled

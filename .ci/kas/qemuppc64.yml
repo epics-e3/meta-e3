@@ -1,0 +1,11 @@
+# Big-endian ppc64. Use as base.yml:qemuppc64.yml
+header:
+  version: 23
+
+machine: qemuppc64
+
+local_conf_header:
+  # oe-core's qemuppc64 defaults to little-endian (DEFAULTTUNE ?= "ppc64p9le");
+  # select the big-endian POWER9 tune so TARGET_ARCH is powerpc64.
+  ppc64-be: |
+    DEFAULTTUNE = "ppc64p9"

@@ -1,0 +1,179 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # kas-container runs the official ghcr.io/siemens/kas/kas image, which ships
+  # the Yocto host dependencies, and maps the runner user into it.
+  KAS_COMMIT: 77468d740732cbe992d7e34b5f645d39b3e186aa # kas 5.5
+  KAS_CONTAINER_SHA256: 7a8186f18d14ec6bec3f8d5188eba7a60f1ef4b5587af15917527588cc7d738a
+  KAS_IMAGE_VERSION: "5.5"
+  # Outside the layer checkout, so yocto-check-layer does not discover the
+  # oe-core layers inside it. DL_DIR and SSTATE_DIR default to this dir.
+  KAS_WORK_DIR: ${{ github.workspace }}/kas-work
+  BASE_REF: ${{ github.base_ref }}
+
+defaults:
+  run:
+    working-directory: meta-e3
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: meta-e3
+          fetch-depth: 0
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install oelint-adv
+        run: pip install 'oelint-adv==9.11.2'
+
+      - name: Run oelint-adv
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            files=$(.ci/scripts/changed-files.sh "origin/$BASE_REF" | grep -E '\.(bb|bbappend|inc)$' || true)
+          else
+            files=$(git ls-files '*.bb' '*.bbappend' '*.inc')
+          fi
+          if [ -z "$files" ]; then
+            echo "No .bb/.bbappend/.inc files changed, nothing to lint."
+            exit 0
+          fi
+          # Settings and suppressions come from .oelint.cfg.
+          # shellcheck disable=SC2086
+          {
+            echo "::group::All findings"
+            oelint-adv --exit-zero $files
+            echo "::endgroup::"
+            echo "Errors (these fail the check):"
+            oelint-adv --hide info --hide warning $files
+          }
+
+  check-layer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: meta-e3
+
+      - name: Install kas-container
+        run: &install-kas |
+          curl -sfL -o "$RUNNER_TEMP/kas-container" \
+            "https://raw.githubusercontent.com/siemens/kas/$KAS_COMMIT/kas-container"
+          echo "$KAS_CONTAINER_SHA256  $RUNNER_TEMP/kas-container" | sha256sum -c -
+          chmod +x "$RUNNER_TEMP/kas-container"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+          mkdir -p "$KAS_WORK_DIR"
+
+      - name: yocto-check-layer
+        run: |
+          kas-container shell .ci/kas/base.yml:.ci/kas/check-layer.yml \
+            -c /repo/.ci/scripts/check-layer.sh
+
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: yocto-check-layer-log
+          path: ${{ env.KAS_WORK_DIR }}/build/yocto-check-layer.log
+          if-no-files-found: ignore
+
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    # Informational only: hosted runners may lack the disk/time for this.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # qemux86-64 (base.yml alone) is left out until epics-base builds
+          # for it: .ci/kas/base.yml:.ci/kas/sstate-mirror.yml
+          - machine: qemuppc64
+            kas: .ci/kas/base.yml:.ci/kas/qemuppc64.yml:.ci/kas/sstate-mirror.yml
+    env:
+      KAS_FILES: ${{ matrix.kas }}
+    steps:
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
+        with:
+          tool-cache: true
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: meta-e3
+          fetch-depth: 0
+
+      - name: Install kas-container
+        run: *install-kas
+
+      - name: Find changed recipes
+        id: recipes
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            files=$(.ci/scripts/changed-files.sh "origin/$BASE_REF" | tr '\n' ' ')
+          else
+            files=--all
+          fi
+          recipes=""
+          if [ -n "$files" ]; then
+            # Bitbake parses the layer to map files to PN.
+            recipes=$(kas-container shell "$KAS_FILES" \
+              -c "/repo/.ci/scripts/changed-recipes.py $files" | tail -n 1)
+          fi
+          if [ -z "$recipes" ]; then
+            # No recipe changed: build require (pulls in epics-base and pvxs).
+            recipes=require
+          fi
+          echo "Recipes: $recipes"
+          echo "recipes=$recipes" >> "$GITHUB_OUTPUT"
+
+      - name: Disk usage before
+        run: df -h
+
+      - name: Build
+        env:
+          RECIPES: ${{ steps.recipes.outputs.recipes }}
+        run: |
+          set -o pipefail
+          kas-container shell "$KAS_FILES" -c "bitbake $RECIPES" 2>&1 \
+            | tee "$RUNNER_TEMP/build.log"
+
+      - name: Disk usage after
+        if: always()
+        run: df -h
+
+      - name: Setscene summary
+        if: always()
+        run: |
+          {
+            echo "### ${{ matrix.machine }}"
+            echo '```'
+            grep -E "Sstate summary|Tasks Summary|setscene" "$RUNNER_TEMP/build.log" || echo "no summary (build did not start)"
+            df -h /
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: build-logs-${{ matrix.machine }}
+          path: ${{ env.KAS_WORK_DIR }}/build/tmp/work/**/temp/log.do_*
+          if-no-files-found: ignore
