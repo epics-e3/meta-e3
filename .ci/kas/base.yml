@@ -1,0 +1,29 @@
+# Base kas configuration shared by CI and local builds.
+#
+# meta-e3 targets kirkstone (see LAYERSERIES_COMPAT in conf/layer.conf).
+# Revisions are pinned in base.lock.yml, generated with "kas lock".
+header:
+  version: 23
+
+machine: qemux86-64
+distro: nodistro
+
+repos:
+  # The repository containing this file (no url).
+  meta-e3:
+
+  bitbake:
+    url: https://git.openembedded.org/bitbake
+    tag: yocto-4.0.35
+    layers:
+      .: disabled
+
+  openembedded-core:
+    url: https://git.openembedded.org/openembedded-core
+    tag: yocto-4.0.35
+    layers:
+      meta:
+
+local_conf_header:
+  meta-e3: |
+    PACKAGE_CLASSES = "package_rpm"
