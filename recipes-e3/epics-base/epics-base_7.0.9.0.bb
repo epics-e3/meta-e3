@@ -14,7 +14,6 @@ SRC_URI = "git://github.com/epics-base/epics-base.git;branch=7.0;protocol=https;
 SRCREV = "86154953f57b1796e7cb81bbc807eae120b9e840"
 PR = "r0"
 
-S = "${WORKDIR}/git"
 
 inherit perlnative
 
@@ -47,7 +46,7 @@ do_configure:append() {
     export libdir="${libdir}"
     export includedir="${includedir}"
     export S="${S}"
-    cp ${WORKDIR}/configure.sh ${S}/.
+    cp ${UNPACKDIR}/configure.sh ${S}/.
     bash configure.sh
 
     # EPICS cross-compilation make rules look for compiled host tools at
@@ -83,7 +82,7 @@ do_install() {
     echo "${PV}" > ${D}/epics/EPICS_BASE_VERSION
 
     install -d ${D}${sysconfdir}/profile.d
-    install -m 0644 ${WORKDIR}/epics.sh ${D}${sysconfdir}/profile.d/epics.sh
+    install -m 0644 ${UNPACKDIR}/epics.sh ${D}${sysconfdir}/profile.d/epics.sh
 
     install -d ${D}${sysconfdir}/epics/env.d
     printf 'EPICS_BASE=/epics\nEPICS_BASE_VERSION=%s\n' "${PV}" \

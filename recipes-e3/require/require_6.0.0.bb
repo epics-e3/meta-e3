@@ -7,7 +7,6 @@ SRC_URI = "git://gitlab.esss.lu.se/epics-modules/require.git;branch=main;protoco
 
 SRCREV = "83f71357ea7e5899445101deaa85f0fbd9f2df09"
 PR = "r0"
-S = "${WORKDIR}/git"
 
 inherit epics-module
 

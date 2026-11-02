@@ -14,7 +14,6 @@ SRC_URI = "git://github.com/epics-base/epics-base.git;branch=7.0;protocol=https;
 SRCREV = "86154953f57b1796e7cb81bbc807eae120b9e840"
 PR = "r0"
 
-S = "${WORKDIR}/git"
 
 inherit native
 
@@ -22,7 +21,7 @@ do_configure:append() {
     export libdir="${libdir}"
     export includedir="${includedir}" 
     export S="${S}"
-    cp ${WORKDIR}/native-configure.sh ${S}/.
+    cp ${UNPACKDIR}/native-configure.sh ${S}/.
     bash native-configure.sh
 }
 

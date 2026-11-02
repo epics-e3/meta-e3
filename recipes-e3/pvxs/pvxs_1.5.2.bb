@@ -7,7 +7,6 @@ SRC_URI = "git://github.com/epics-base/pvxs.git;branch=master;protocol=https;"
 
 SRCREV = "007ba4e000a1366259f71c494872bd5fd0dd5552"
 PR = "r0"
-S = "${WORKDIR}/git"
 
 inherit epics-module
 
