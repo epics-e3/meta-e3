@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/modules/libcom/src/osi/os/posix/osdThread.c b/modules/libcom/src/osi/os/posix/osdThread.c
 index e9ea2dfbc..5a7f6f307 100644
 --- a/modules/libcom/src/osi/os/posix/osdThread.c

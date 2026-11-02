@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/configure/RULES_BUILD b/configure/RULES_BUILD
 index e38bbcf08..46e2947f9 100644
 --- a/configure/RULES_BUILD
