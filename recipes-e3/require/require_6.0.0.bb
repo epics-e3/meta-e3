@@ -20,10 +20,6 @@ FILES:${PN} += "${libdir}/*.so"
 FILES:${PN}-dev:remove = "${libdir}/lib*.so"
 INSANE_SKIP:${PN} += "dev-so rpaths libdir"
 
-do_configure:append() {
-    echo "PVXS:=${STAGING_DIR_HOST}/pvxs" >> configure/RELEASE.local
-}
-
 do_compile() {
     make ${PARALLEL_MAKE} \
         SYSROOT=${STAGING_DIR_HOST} \
@@ -55,6 +51,11 @@ do_install() {
     fi
     epics_set_rpath ${D}${bindir} /epics/lib/${EPICS_TARGET_ARCH}
     epics_set_rpath ${D}${libdir} /epics/lib/${EPICS_TARGET_ARCH}
+
+    # RELEASE.local points at the sysroot of this build; point it at the
+    # target locations instead (buildpaths QA).
+    sed -i 's#${STAGING_DIR_HOST}##' \
+        ${D}${E3_REQUIRE_LOCATION}/configure/RELEASE.local
 
     if [ -d ${S}/include ] && [ "$(ls -A ${S}/include 2>/dev/null)" ]; then
         install -d ${D}${includedir}
