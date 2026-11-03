@@ -66,8 +66,8 @@ do_install() {
     install -d ${D}${sysconfdir}/epics/env.d
     cat > ${D}${sysconfdir}/epics/env.d/20-require.env <<EOF
 E3_REQUIRE_VERSION=${PV}
-E3_REQUIRE_BIN=/usr/bin
-E3_REQUIRE_LIB=/usr/lib
+E3_REQUIRE_BIN=${bindir}
+E3_REQUIRE_LIB=${libdir}
 E3_REQUIRE_DB=/epics-modules/require/db
 E3_REQUIRE_DBD=/epics-modules/require/dbd
 REQUIRE_MODULE_PATH=/epics-modules/
