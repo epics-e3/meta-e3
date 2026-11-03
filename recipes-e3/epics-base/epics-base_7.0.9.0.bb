@@ -88,6 +88,19 @@ do_install() {
     rm -f ${D}/epics/bin/linux-x86_64
     echo "${PV}" > ${D}/epics/EPICS_BASE_VERSION
 
+    # Drop build-host paths from the installed tree (pkgconfig and buildpaths
+    # QA checks):
+    #  - pkg-config files record the toolchain and LDFLAGS used for the build.
+    #  - CONFIG_SITE.local holds the paths set by configure.sh; modules set
+    #    their own TOOLS and EPICS_HOST_BIN (see epics-module.bbclass).
+    #  - TOOLCHAIN.* is preprocessor output, with line markers.
+    sed -i -E -e 's# -f(debug|macro|file)-prefix-map=[^ ]*##g' \
+        -e 's# --sysroot=[^ ]*##g' \
+        ${D}/epics/lib/pkgconfig/*.pc
+    sed -i -E '/^(INSTALL_LOCATION|EPICS_HOST_BIN|TOOLS)=/d' \
+        ${D}/epics/configure/CONFIG_SITE.local
+    sed -i '/^# [0-9]/d' ${D}/epics/cfg/TOOLCHAIN.*
+
     install -d ${D}${sysconfdir}/profile.d
     install -m 0644 ${UNPACKDIR}/epics.sh ${D}${sysconfdir}/profile.d/epics.sh
 
