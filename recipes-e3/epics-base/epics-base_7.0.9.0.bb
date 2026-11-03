@@ -17,7 +17,7 @@ PR = "r0"
 
 inherit perlnative
 
-DEPENDS += "epics-base-native"
+DEPENDS += "epics-base-native patchelf-native"
 
 # The EPICS tree contains a mix of ELF binaries, Perl scripts, makefiles and
 # data files. Disable debug splitting and stripping to prevent objcopy from
@@ -100,6 +100,18 @@ do_install() {
     sed -i -E '/^(INSTALL_LOCATION|EPICS_HOST_BIN|TOOLS)=/d' \
         ${D}/epics/configure/CONFIG_SITE.local
     sed -i '/^# [0-9]/d' ${D}/epics/cfg/TOOLCHAIN.*
+
+    # Set the RUNPATH, which EPICS links with the build-tree location, to the
+    # target location of the libraries (see epics_set_rpath in
+    # epics-module.bbclass).
+    for dir in ${D}/epics/bin/* ${D}/epics/lib/*; do
+        arch=$(basename "$dir")
+        find "$dir" -maxdepth 1 -type f | while read f; do
+            if [ "$(head -c 4 "$f" | tail -c 3)" = "ELF" ]; then
+                patchelf --set-rpath /epics/lib/$arch "$f"
+            fi
+        done
+    done
 
     install -d ${D}${sysconfdir}/profile.d
     install -m 0644 ${UNPACKDIR}/epics.sh ${D}${sysconfdir}/profile.d/epics.sh

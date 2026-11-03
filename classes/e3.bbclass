@@ -73,7 +73,6 @@ do_install() {
         rmdir ${D}/include
     fi
 
-    find ${D}${bindir} ${D}${libdir} ${D}${libdir} -maxdepth 1 -type f 2>/dev/null | while read f; do
-        chrpath --replace /epics/lib/${EPICS_TARGET_ARCH}:${libdir} "$f" 2>/dev/null || true
-    done
+    epics_set_rpath ${D}${bindir} /epics/lib/${EPICS_TARGET_ARCH}:${libdir}
+    epics_set_rpath ${D}${libdir} /epics/lib/${EPICS_TARGET_ARCH}:${libdir}
 }

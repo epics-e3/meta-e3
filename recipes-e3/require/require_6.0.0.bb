@@ -53,6 +53,8 @@ do_install() {
         install -d ${D}${libdir}
         install -m 0755 ${S}/lib/*.so* ${D}${libdir}/
     fi
+    epics_set_rpath ${D}${bindir} /epics/lib/${EPICS_TARGET_ARCH}
+    epics_set_rpath ${D}${libdir} /epics/lib/${EPICS_TARGET_ARCH}
 
     if [ -d ${S}/include ] && [ "$(ls -A ${S}/include 2>/dev/null)" ]; then
         install -d ${D}${includedir}

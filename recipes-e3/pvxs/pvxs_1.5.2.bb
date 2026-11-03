@@ -49,6 +49,8 @@ do_install() {
 
     install -d ${D}${libdir}
     install -m 0644 ${S}/lib/${EPICS_TARGET_ARCH}/*.so* ${D}${libdir}/
+    epics_set_rpath ${D}${bindir} /epics/lib/${EPICS_TARGET_ARCH}
+    epics_set_rpath ${D}${libdir} /epics/lib/${EPICS_TARGET_ARCH}
 
     install -d ${D}${includedir}/pvxs
     install -m 0644 ${S}/include/pvxs/* ${D}${includedir}/pvxs/
