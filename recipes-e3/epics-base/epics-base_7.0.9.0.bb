@@ -49,6 +49,10 @@ do_configure:append() {
     cp ${UNPACKDIR}/configure.sh ${S}/.
     bash configure.sh
 
+    # Remove old build as headers of a previous build are read-only
+    # and cannot be overwritten.
+    rm -rf ${S}/epics
+
     # EPICS cross-compilation make rules look for compiled host tools at
     # $(EPICS_BASE)/bin/$(EPICS_HOST_ARCH)/, not at EPICS_HOST_BIN.
     # Symlink that path to the native sysroot bin so tools like e_flex are found.
@@ -74,11 +78,10 @@ do_compile() {
 }
 
 do_install() {
-    # Remove binary tools symlink
-    rm -Rf ${S}/epics/bin/linux-x86_64
-
     install -d ${D}/epics/
     cp -r --no-preserve=ownership --preserve=mode,links,timestamps ${S}/epics/* ${D}/epics/.
+    # Remove the host tools symlinks, they aren't used after do_compile step.
+    rm -f ${D}/epics/bin/linux-x86_64
     echo "${PV}" > ${D}/epics/EPICS_BASE_VERSION
 
     install -d ${D}${sysconfdir}/profile.d
