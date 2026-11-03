@@ -29,6 +29,9 @@ do_compile() {
         SYSROOT=${STAGING_DIR_HOST} \
         CC="${CC}" \
         CCC="${CXX}" \
+        CMD_CFLAGS="${DEBUG_PREFIX_MAP}" \
+        CMD_CPPFLAGS="${DEBUG_PREFIX_MAP}" \
+        CMD_LDFLAGS="${DEBUG_PREFIX_MAP}" \
         AR="${AR} -rc" \
         RANLIB="${RANLIB}" \
         LD="${LD}" \
