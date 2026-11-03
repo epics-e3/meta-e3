@@ -27,8 +27,8 @@ do_configure:append() {
 do_compile() {
     make ${PARALLEL_MAKE} \
         SYSROOT=${STAGING_DIR_HOST} \
-        CC="${CC}" \
-        CCC="${CXX}" \
+        CC="${CC} ${DEBUG_PREFIX_MAP}" \
+        CCC="${CXX} ${DEBUG_PREFIX_MAP}" \
         AR="${AR} -rc" \
         RANLIB="${RANLIB}" \
         LD="${LD}" \
