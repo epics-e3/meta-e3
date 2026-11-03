@@ -38,6 +38,8 @@ do_compile() {
         RANLIB="${RANLIB}" \
         LD="${LD}" \
         LDFLAGS="${LDFLAGS}" \
+        FINAL_LOCATION=/pvxs \
+        IOCS_APPL_TOP=/pvxs \
         INSTALL_LOCATION=${S} install
 }
 

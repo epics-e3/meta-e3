@@ -76,7 +76,9 @@ do_compile() {
         AR="${AR} -rc" \
         RANLIB="${RANLIB}" \
         LD="${LD}" \
-        LDFLAGS="${LDFLAGS}"
+        LDFLAGS="${LDFLAGS}" \
+        FINAL_LOCATION=/epics \
+        IOCS_APPL_TOP=/epics
 }
 
 do_install() {
