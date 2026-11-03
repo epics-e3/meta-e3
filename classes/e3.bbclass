@@ -3,10 +3,10 @@ DEPENDS += "require"
 
 # This is a conviniance, as every module will install these files.
 FILES:${PN} += "/epics-modules/${E3_MODULE_NAME}"
-FILES:${PN} += "/include /lib"
-FILES:${PN} += "/include/*.h /lib/*.so"
-FILES:${PN}-dev:remove = "/lib/*.so"
-INSANE_SKIP:${PN} += "libdir"
+# require loads module libraries by their unversioned name.
+FILES:${PN} += "${libdir}/*.so"
+FILES:${PN}-dev:remove = "${libdir}/lib*.so"
+INSANE_SKIP:${PN} += "libdir dev-so"
 INSANE_SKIP:${PN}-dbg += "libdir"
 
 
@@ -58,6 +58,20 @@ do_install() {
         MODULE=${E3_MODULE_NAME} \
         LIBVERSION=${PV} \
         install
+
+    # driver.makefile installs to ${INSTALL_PREFIX}/lib and /include. Move
+    # them to the standard directories (usrmerge QA; /lib is also not on the
+    # library search path of 64-bit machines).
+    if [ -d ${D}/lib ]; then
+        install -d ${D}${libdir}
+        mv ${D}/lib/* ${D}${libdir}/
+        rmdir ${D}/lib
+    fi
+    if [ -d ${D}/include ]; then
+        install -d ${D}${includedir}
+        mv ${D}/include/* ${D}${includedir}/
+        rmdir ${D}/include
+    fi
 
     find ${D}${bindir} ${D}${libdir} ${D}${libdir} -maxdepth 1 -type f 2>/dev/null | while read f; do
         chrpath --replace /epics/lib/${EPICS_TARGET_ARCH}:${libdir} "$f" 2>/dev/null || true
