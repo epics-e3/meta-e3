@@ -14,8 +14,8 @@ def _epics_arch(arch_str):
     }
     return arch_map.get(arch_str, 'linux-' + arch_str)
 
-EPICS_TARGET_ARCH = "${@_epics_arch(d.getVar('TARGET_ARCH'))}"
-EPICS_HOST_ARCH   = "${@_epics_arch(d.getVar('BUILD_ARCH'))}"
+EPICS_TARGET_ARCH ?= "${@_epics_arch(d.getVar('TARGET_ARCH'))}"
+EPICS_HOST_ARCH ?= "${@_epics_arch(d.getVar('BUILD_ARCH'))}"
 export EPICS_HOST_ARCH
 
 EPICS_BASE = "${STAGING_DIR_HOST}/epics"

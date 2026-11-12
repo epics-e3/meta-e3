@@ -1,23 +1,23 @@
-DESCRIPTION = "EPICS Base Library"
+SUMMARY = "EPICS Base Library"
+DESCRIPTION = "This is the main core of EPICS."
+HOMEPAGE = "https://epics-controls.org"
 LICENSE = "EPICS_LICENSE"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=2eeea17a15fc6ba8501fdcec09b854dc"
 
+DEPENDS += "epics-base-native patchelf-native"
+
 SRC_URI = "git://github.com/epics-base/epics-base.git;branch=7.0;protocol=https;\
-	         file://RULES_MODULES_echo_quotes.patch \
+           file://RULES_MODULES_echo_quotes.patch \
            file://RULES_BUILD_remove_mkdir.patch \
            file://initialise_pthreadInfo_attr.patch \
            file://test_dbtemplate_fix_relative_path_tests.patch \
            file://increase_default_errlog_size.patch \
            file://configure.sh \
            file://epics.sh"
-
 SRCREV = "86154953f57b1796e7cb81bbc807eae120b9e840"
 PR = "r0"
 
-
 inherit perlnative
-
-DEPENDS += "epics-base-native patchelf-native"
 
 # The EPICS tree contains a mix of ELF binaries, Perl scripts, makefiles and
 # data files. Disable debug splitting and stripping to prevent objcopy from

@@ -1,4 +1,5 @@
-DESCRIPTION = "EPICS IOC Status and Control"
+SUMMARY = "EPICS IOC Status and Control"
+DESCRIPTION = "An EPICS module that provide monitoring records for ioc internal and system information."
 HOMEPAGE = "https://github.com/epics-modules/iocStats"
 LICENSE = "EPICS_LICENSE"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=76d18f9132055ed510b481f6f211e0d7"
@@ -21,7 +22,6 @@ E3_MODULE_NAME = "iocstats"
 
 INSANE_SKIP:${PN} += "dev-so rpaths"
 
-
 do_configure:append() {
     cp ${UNPACKDIR}/Makefile ${S}/Makefile
 
@@ -34,4 +34,3 @@ do_configure:append() {
     cp ${UNPACKDIR}/iocQueue.db ${S}/template/
     cp ${UNPACKDIR}/ioc.template ${S}/template/
 }
-
