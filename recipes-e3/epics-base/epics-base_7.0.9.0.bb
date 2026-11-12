@@ -1,24 +1,23 @@
-DESCRIPTION = "EPICS Base Library"
+SUMMARY = "EPICS Base Library"
+DESCRIPTION = "This is the main core of EPICS."
+HOMEPAGE = "https://epics-controls.org"
 LICENSE = "EPICS_LICENSE"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=2eeea17a15fc6ba8501fdcec09b854dc"
 
+DEPENDS += "epics-base-native patchelf-native"
+
 SRC_URI = "git://github.com/epics-base/epics-base.git;branch=7.0;protocol=https;\
-	         file://RULES_MODULES_echo_quotes.patch \
+           file://RULES_MODULES_echo_quotes.patch \
            file://RULES_BUILD_remove_mkdir.patch \
            file://initialise_pthreadInfo_attr.patch \
            file://test_dbtemplate_fix_relative_path_tests.patch \
            file://increase_default_errlog_size.patch \
            file://configure.sh \
            file://epics.sh"
-
 SRCREV = "86154953f57b1796e7cb81bbc807eae120b9e840"
 PR = "r0"
 
-S = "${WORKDIR}/git"
-
 inherit perlnative
-
-DEPENDS += "epics-base-native"
 
 # The EPICS tree contains a mix of ELF binaries, Perl scripts, makefiles and
 # data files. Disable debug splitting and stripping to prevent objcopy from
@@ -47,8 +46,12 @@ do_configure:append() {
     export libdir="${libdir}"
     export includedir="${includedir}"
     export S="${S}"
-    cp ${WORKDIR}/configure.sh ${S}/.
+    cp ${UNPACKDIR}/configure.sh ${S}/.
     bash configure.sh
+
+    # Remove old build as headers of a previous build are read-only
+    # and cannot be overwritten.
+    rm -rf ${S}/epics
 
     # EPICS cross-compilation make rules look for compiled host tools at
     # $(EPICS_BASE)/bin/$(EPICS_HOST_ARCH)/, not at EPICS_HOST_BIN.
@@ -68,22 +71,50 @@ do_compile() {
     make ${PARALLEL_MAKE} SYSROOT=${STAGING_DIR_HOST} \
         CC="${CC}" \
         CCC="${CXX}" \
+        CMD_CFLAGS="${DEBUG_PREFIX_MAP}" \
+        CMD_CPPFLAGS="${DEBUG_PREFIX_MAP}" \
         AR="${AR} -rc" \
         RANLIB="${RANLIB}" \
         LD="${LD}" \
-        LDFLAGS="${LDFLAGS}"
+        LDFLAGS="${LDFLAGS}" \
+        FINAL_LOCATION=/epics \
+        IOCS_APPL_TOP=/epics
 }
 
 do_install() {
-    # Remove binary tools symlink
-    rm -Rf ${S}/epics/bin/linux-x86_64
-
     install -d ${D}/epics/
     cp -r --no-preserve=ownership --preserve=mode,links,timestamps ${S}/epics/* ${D}/epics/.
+    # Remove the host tools symlinks, they aren't used after do_compile step.
+    rm -f ${D}/epics/bin/linux-x86_64
     echo "${PV}" > ${D}/epics/EPICS_BASE_VERSION
 
+    # Drop build-host paths from the installed tree (pkgconfig and buildpaths
+    # QA checks):
+    #  - pkg-config files record the toolchain and LDFLAGS used for the build.
+    #  - CONFIG_SITE.local holds the paths set by configure.sh; modules set
+    #    their own TOOLS and EPICS_HOST_BIN (see epics-module.bbclass).
+    #  - TOOLCHAIN.* is preprocessor output, with line markers.
+    sed -i -E -e 's# -f(debug|macro|file)-prefix-map=[^ ]*##g' \
+        -e 's# --sysroot=[^ ]*##g' \
+        ${D}/epics/lib/pkgconfig/*.pc
+    sed -i -E '/^(INSTALL_LOCATION|EPICS_HOST_BIN|TOOLS)=/d' \
+        ${D}/epics/configure/CONFIG_SITE.local
+    sed -i '/^# [0-9]/d' ${D}/epics/cfg/TOOLCHAIN.*
+
+    # Set the RUNPATH, which EPICS links with the build-tree location, to the
+    # target location of the libraries (see epics_set_rpath in
+    # epics-module.bbclass).
+    for dir in ${D}/epics/bin/* ${D}/epics/lib/*; do
+        arch=$(basename "$dir")
+        find "$dir" -maxdepth 1 -type f | while read f; do
+            if [ "$(head -c 4 "$f" | tail -c 3)" = "ELF" ]; then
+                patchelf --set-rpath /epics/lib/$arch "$f"
+            fi
+        done
+    done
+
     install -d ${D}${sysconfdir}/profile.d
-    install -m 0644 ${WORKDIR}/epics.sh ${D}${sysconfdir}/profile.d/epics.sh
+    install -m 0644 ${UNPACKDIR}/epics.sh ${D}${sysconfdir}/profile.d/epics.sh
 
     install -d ${D}${sysconfdir}/epics/env.d
     printf 'EPICS_BASE=/epics\nEPICS_BASE_VERSION=%s\n' "${PV}" \

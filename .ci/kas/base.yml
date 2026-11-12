@@ -1,6 +1,6 @@
 # Base kas configuration shared by CI and local builds.
 #
-# meta-e3 targets kirkstone (see LAYERSERIES_COMPAT in conf/layer.conf).
+# meta-e3 targets wrynose (see LAYERSERIES_COMPAT in conf/layer.conf).
 # Revisions are pinned in base.lock.yml, generated with "kas lock".
 header:
   version: 23
@@ -14,13 +14,13 @@ repos:
 
   bitbake:
     url: https://git.openembedded.org/bitbake
-    tag: yocto-4.0.35
+    tag: yocto-6.0.4
     layers:
       .: disabled
 
   openembedded-core:
     url: https://git.openembedded.org/openembedded-core
-    tag: yocto-4.0.35
+    tag: yocto-6.0.4
     layers:
       meta:
 

@@ -3,6 +3,6 @@ header:
 overrides:
   repos:
     bitbake:
-      commit: 7fd0197fd5fedd23cc885b5e7e816d86a392fdf9
+      commit: 51fd94a67fa17650a9ff623492005972bbc7d26f
     openembedded-core:
-      commit: 51259c7e933a2ac8ebc01604d6e65607b76b7b56
+      commit: 0f03c732a0a2d0506b41b1abe60b3f368b2300dc
