@@ -1,16 +1,16 @@
-DESCRIPTION = "Library and CLI utilities acting as PVAccess protocol client and/or server"
+SUMMARY = "The PVXS EPICS module."
+DESCRIPTION = "Library and CLI utilities acting as PVAccess protocol client and/or server."
 HOMEPAGE = "https://github.com/epics-base/pvxs/"
 LICENSE = "BSD-4-Clause-UC"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3775480a712fc46a69647678acb234cb"
 
-SRC_URI = "git://github.com/epics-base/pvxs.git;branch=master;protocol=https;"
+DEPENDS += "libevent"
 
+SRC_URI = "git://github.com/epics-base/pvxs.git;branch=master;protocol=https;"
 SRCREV = "007ba4e000a1366259f71c494872bd5fd0dd5552"
 PR = "r0"
 
 inherit epics-module
-
-DEPENDS += "libevent"
 
 # EPICS installs both libpvxs.so.X.Y (versioned) and libpvxs.so (unversioned full
 # copy, not a symlink) — both are needed at runtime by EPICS module builds.

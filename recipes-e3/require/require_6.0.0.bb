@@ -1,16 +1,16 @@
+SUMMARY = "The require e3 module"
 DESCRIPTION = "EPICS module for dynamically loading functionality at runtime"
 HOMEPAGE = "https://gitlab.esss.lu.se/epics-modules/require"
 LICENSE = "GPL-3.0-or-later"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=62ae04c770d5b4f4180e42b47063ab03"
 
-SRC_URI = "git://gitlab.esss.lu.se/epics-modules/require.git;branch=main;protocol=https;"
+DEPENDS += "pvxs"
 
+SRC_URI = "git://gitlab.esss.lu.se/epics-modules/require.git;branch=main;protocol=https;"
 SRCREV = "83f71357ea7e5899445101deaa85f0fbd9f2df09"
 PR = "r0"
 
 inherit epics-module
-
-DEPENDS += "pvxs"
 
 E3_REQUIRE_LOCATION = "/epics-modules/${PN}"
 

@@ -9,10 +9,9 @@ FILES:${PN}-dev:remove = "${libdir}/lib*.so"
 INSANE_SKIP:${PN} += "libdir dev-so"
 INSANE_SKIP:${PN}-dbg += "libdir"
 
-
 # EPICS version is needed for require in a environment variable.
 # The yocto build environment does not work as the conda environment,
-# so we need to create the variables here 
+# so we need to create the variables here.
 def _epics_base_version(d):
     import os
     f = os.path.join(d.getVar('STAGING_DIR_HOST'), 'epics', 'EPICS_BASE_VERSION')
@@ -21,9 +20,9 @@ def _epics_base_version(d):
 EPICS_BASE_VERSION = "${@_epics_base_version(d)}"
 export EPICS_BASE_VERSION
 
-EPICS_MODULES        = "${STAGING_DIR_HOST}/epics-modules"
+EPICS_MODULES = "${STAGING_DIR_HOST}/epics-modules"
 export EPICS_MODULES
-E3_REQUIRE_LOCATION  = "${EPICS_MODULES}/require"
+E3_REQUIRE_LOCATION = "${EPICS_MODULES}/require"
 export E3_REQUIRE_LOCATION
 E3_REQUIRE_TOOLS = "${E3_REQUIRE_LOCATION}/share"
 export E3_REQUIRE_TOOLS
@@ -48,7 +47,6 @@ do_compile() {
         MODULE=${E3_MODULE_NAME} \
         LIBVERSION=${PV}
 }
-
 
 do_install() {
     make SYSROOT=${STAGING_DIR_HOST} \
