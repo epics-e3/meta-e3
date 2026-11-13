@@ -1,35 +1,30 @@
+SUMMARY = "The require3 e3 module"
 DESCRIPTION = "EPICS module for dynamically loading functionality at runtime"
-HOMEPAGE = "https://gitlab.esss.lu.se/epics-modules/require"
-LICENSE = "GPL-3.0-or-later"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=62ae04c770d5b4f4180e42b47063ab03"
-
-SRC_URI = "git://gitlab.esss.lu.se/epics-modules/require.git;branch=main;protocol=https;"
-
-SRCREV = "83f71357ea7e5899445101deaa85f0fbd9f2df09"
-PR = "r0"
-S = "${WORKDIR}/git"
-
-inherit epics-module
+HOMEPAGE = "https://github.com/epics-e3/require3"
+LICENSE = "LGPL-3.0-or-later"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=3000208d539ec061b899bce1d9ce9404"
 
 DEPENDS += "pvxs"
+
+SRC_URI = "git://github.com/epics-e3/require3.git;branch=main;protocol=https;"
+SRCREV = "ab0f44bdb94477e56e5b06f7f2cb8889739820e7"
+PR = "r0"
+
+inherit epics-module
 
 E3_REQUIRE_LOCATION = "/epics-modules/${PN}"
 
 FILES:${PN} += "/epics-modules ${sysconfdir}/epics"
-SYSROOT_DIRS += "/epics-modules/require"
+SYSROOT_DIRS += "/epics-modules/require3"
 FILES:${PN} += "${libdir}/*.so"
 FILES:${PN}-dev:remove = "${libdir}/lib*.so"
 INSANE_SKIP:${PN} += "dev-so rpaths libdir"
 
-do_configure:append() {
-    echo "PVXS:=${STAGING_DIR_HOST}/pvxs" >> configure/RELEASE.local
-}
-
 do_compile() {
     make ${PARALLEL_MAKE} \
         SYSROOT=${STAGING_DIR_HOST} \
-        CC="${CC}" \
-        CCC="${CXX}" \
+        CC="${CC} ${DEBUG_PREFIX_MAP}" \
+        CCC="${CXX} ${DEBUG_PREFIX_MAP}" \
         AR="${AR} -rc" \
         RANLIB="${RANLIB}" \
         LD="${LD}" \
@@ -54,6 +49,13 @@ do_install() {
         install -d ${D}${libdir}
         install -m 0755 ${S}/lib/*.so* ${D}${libdir}/
     fi
+    epics_set_rpath ${D}${bindir} /epics/lib/${EPICS_TARGET_ARCH}
+    epics_set_rpath ${D}${libdir} /epics/lib/${EPICS_TARGET_ARCH}
+
+    # RELEASE.local points at the sysroot of this build; point it at the
+    # target locations instead (buildpaths QA).
+    sed -i 's#${STAGING_DIR_HOST}##' \
+        ${D}${E3_REQUIRE_LOCATION}/configure/RELEASE.local
 
     if [ -d ${S}/include ] && [ "$(ls -A ${S}/include 2>/dev/null)" ]; then
         install -d ${D}${includedir}
@@ -64,10 +66,10 @@ do_install() {
     install -d ${D}${sysconfdir}/epics/env.d
     cat > ${D}${sysconfdir}/epics/env.d/20-require.env <<EOF
 E3_REQUIRE_VERSION=${PV}
-E3_REQUIRE_BIN=/usr/bin
-E3_REQUIRE_LIB=/usr/lib
-E3_REQUIRE_DB=/epics-modules/require/db
-E3_REQUIRE_DBD=/epics-modules/require/dbd
+E3_REQUIRE_BIN=${bindir}
+E3_REQUIRE_LIB=${libdir}
+E3_REQUIRE_DB=/epics-modules/require3/db
+E3_REQUIRE_DBD=/epics-modules/require3/dbd
 REQUIRE_MODULE_PATH=/epics-modules/
 EPICS_HOST_ARCH=${EPICS_TARGET_ARCH}
 EOF

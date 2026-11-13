@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/modules/libcom/src/error/errlog.c b/modules/libcom/src/error/errlog.c
 index 75c6e63c1..ead0f5d29 100644
 --- a/modules/libcom/src/error/errlog.c

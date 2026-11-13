@@ -1,17 +1,13 @@
 # Overlay for the build job. Use as base.yml:sstate-mirror.yml
 #
-# kirkstone has no OE_FRAGMENTS / core/yocto/sstate-mirror-cdn fragment, so
-# the Yocto Project sstate mirror and hash equivalence server are set
-# explicitly.
+# Uses the Yocto Project sstate mirror and hash equivalence server through
+# oe-core's core/yocto/sstate-mirror-cdn fragment.
 header:
   version: 23
 
 local_conf_header:
   sstate-mirror: |
-    BB_SIGNATURE_HANDLER = "OEEquivHash"
-    BB_HASHSERVE = "auto"
-    BB_HASHSERVE_UPSTREAM = "hashserv.yoctoproject.org:8686"
-    SSTATE_MIRRORS ?= "file://.* https://sstate.yoctoproject.org/all/PATH;downloadfilename=PATH"
+    OE_FRAGMENTS += "core/yocto/sstate-mirror-cdn"
   disk: |
     INHERIT += "rm_work"
     # Stop cleanly instead of failing randomly when the runner runs out of disk.

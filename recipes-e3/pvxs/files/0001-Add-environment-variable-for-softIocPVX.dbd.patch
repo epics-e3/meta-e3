@@ -3,6 +3,8 @@ From: "Lucas A. M. Magalhaes" <lucas.magalhaes@ess.eu>
 Date: Fri, 25 Jul 2025 11:12:04 +0200
 Subject: [PATCH] Add environment variable for softIocPVX.dbd
 
+Upstream-Status: Pending
+
 ---
  qsrv/softMain.cpp | 8 ++++++++
  1 file changed, 8 insertions(+)
