@@ -1,5 +1,5 @@
 inherit epics-module
-DEPENDS += "require"
+DEPENDS += "require3"
 
 # This is a conviniance, as every module will install these files.
 FILES:${PN} += "/epics-modules/${E3_MODULE_NAME}"
@@ -22,7 +22,7 @@ export EPICS_BASE_VERSION
 
 EPICS_MODULES = "${STAGING_DIR_HOST}/epics-modules"
 export EPICS_MODULES
-E3_REQUIRE_LOCATION = "${EPICS_MODULES}/require"
+E3_REQUIRE_LOCATION = "${EPICS_MODULES}/require3"
 export E3_REQUIRE_LOCATION
 E3_REQUIRE_TOOLS = "${E3_REQUIRE_LOCATION}/share"
 export E3_REQUIRE_TOOLS
@@ -42,7 +42,7 @@ do_compile() {
         LD="${LD}" \
         LDFLAGS="${LDFLAGS}" \
         BUILD_ARCHS=${EPICS_TARGET_ARCH} \
-        E3_REQUIRE_TOOLS="${STAGING_DIR_HOST}/epics-modules/require/share" \
+        E3_REQUIRE_TOOLS="${E3_REQUIRE_TOOLS}" \
         EPICS_MODULES="${STAGING_DIR_HOST}/epics-modules" \
         MODULE=${E3_MODULE_NAME} \
         LIBVERSION=${PV}
@@ -51,7 +51,7 @@ do_compile() {
 do_install() {
     make SYSROOT=${STAGING_DIR_HOST} \
         BUILD_ARCHS=${EPICS_TARGET_ARCH} \
-        E3_REQUIRE_TOOLS="${STAGING_DIR_HOST}/epics-modules/require/share" \
+        E3_REQUIRE_TOOLS="${E3_REQUIRE_TOOLS}" \
         INSTALL_PREFIX="${D}" \
         MODULE=${E3_MODULE_NAME} \
         LIBVERSION=${PV} \

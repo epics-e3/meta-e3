@@ -1,13 +1,13 @@
-SUMMARY = "The require e3 module"
+SUMMARY = "The require3 e3 module"
 DESCRIPTION = "EPICS module for dynamically loading functionality at runtime"
-HOMEPAGE = "https://gitlab.esss.lu.se/epics-modules/require"
-LICENSE = "GPL-3.0-or-later"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=62ae04c770d5b4f4180e42b47063ab03"
+HOMEPAGE = "https://github.com/epics-e3/require3"
+LICENSE = "LGPL-3.0-or-later"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=3000208d539ec061b899bce1d9ce9404"
 
 DEPENDS += "pvxs"
 
-SRC_URI = "git://gitlab.esss.lu.se/epics-modules/require.git;branch=main;protocol=https;"
-SRCREV = "83f71357ea7e5899445101deaa85f0fbd9f2df09"
+SRC_URI = "git://github.com/epics-e3/require3.git;branch=main;protocol=https;"
+SRCREV = "ab0f44bdb94477e56e5b06f7f2cb8889739820e7"
 PR = "r0"
 
 inherit epics-module
@@ -15,7 +15,7 @@ inherit epics-module
 E3_REQUIRE_LOCATION = "/epics-modules/${PN}"
 
 FILES:${PN} += "/epics-modules ${sysconfdir}/epics"
-SYSROOT_DIRS += "/epics-modules/require"
+SYSROOT_DIRS += "/epics-modules/require3"
 FILES:${PN} += "${libdir}/*.so"
 FILES:${PN}-dev:remove = "${libdir}/lib*.so"
 INSANE_SKIP:${PN} += "dev-so rpaths libdir"
@@ -68,8 +68,8 @@ do_install() {
 E3_REQUIRE_VERSION=${PV}
 E3_REQUIRE_BIN=${bindir}
 E3_REQUIRE_LIB=${libdir}
-E3_REQUIRE_DB=/epics-modules/require/db
-E3_REQUIRE_DBD=/epics-modules/require/dbd
+E3_REQUIRE_DB=/epics-modules/require3/db
+E3_REQUIRE_DBD=/epics-modules/require3/dbd
 REQUIRE_MODULE_PATH=/epics-modules/
 EPICS_HOST_ARCH=${EPICS_TARGET_ARCH}
 EOF
