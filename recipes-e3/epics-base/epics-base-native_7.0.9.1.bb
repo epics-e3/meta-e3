@@ -1,9 +1,11 @@
-DESCRIPTION = "EPICS Base Library"
+SUMMARY = "Native EPICS Base Library"
+DESCRIPTION = "This is the main core of EPICS tools."
+HOMEPAGE = "https://epics-controls.org"
 LICENSE = "EPICS_LICENSE"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=2eeea17a15fc6ba8501fdcec09b854dc"
 
 SRC_URI = "git://github.com/epics-base/epics-base.git;branch=7.0;protocol=https;\
-	         file://RULES_MODULES_echo_quotes.patch \
+           file://RULES_MODULES_echo_quotes.patch \
            file://RULES_BUILD_remove_mkdir.patch \
            file://initialise_pthreadInfo_attr.patch \
            file://test_dbtemplate_fix_relative_path_tests.patch \
@@ -14,15 +16,13 @@ SRC_URI = "git://github.com/epics-base/epics-base.git;branch=7.0;protocol=https;
 SRCREV = "86154953f57b1796e7cb81bbc807eae120b9e840"
 PR = "r0"
 
-S = "${WORKDIR}/git"
-
-inherit native
+inherit_defer native
 
 do_configure:append() {
     export libdir="${libdir}"
-    export includedir="${includedir}" 
+    export includedir="${includedir}"
     export S="${S}"
-    cp ${WORKDIR}/native-configure.sh ${S}/.
+    cp ${UNPACKDIR}/native-configure.sh ${S}/.
     bash native-configure.sh
 }
 

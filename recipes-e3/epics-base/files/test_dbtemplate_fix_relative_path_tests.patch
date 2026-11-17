@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/modules/database/test/ioc/dbtemplate/msi.plt b/modules/database/test/ioc/dbtemplate/msi.plt
 index 09835d3ac..e8b9bb900 100644
 --- a/modules/database/test/ioc/dbtemplate/msi.plt

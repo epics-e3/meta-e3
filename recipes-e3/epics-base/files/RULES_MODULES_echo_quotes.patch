@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/configure/RULES_MODULES b/configure/RULES_MODULES
 index b8e18aecb..7ae8ffcbc 100644
 --- a/configure/RULES_MODULES

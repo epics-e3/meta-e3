@@ -27,7 +27,7 @@ packages for plain `kas`. Install kas with `pip install kas==5.5`.
 
 The kas files compose with `:`; `base.yml` must come first:
 
-  - `base.yml`           bitbake + openembedded-core (kirkstone), qemux86-64,
+  - `base.yml`           bitbake + openembedded-core (wrynose), qemux86-64,
                          nodistro, meta-e3. Pinned by `base.lock.yml`.
   - `qemuppc64.yml`      big-endian ppc64.
   - `sstate-mirror.yml`  Yocto Project sstate mirror and hash equivalence
