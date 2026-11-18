@@ -44,7 +44,7 @@ do_compile() {
         LDFLAGS="${LDFLAGS}" \
         BUILD_ARCHS=${EPICS_TARGET_ARCH} \
         E3_REQUIRE_TOOLS="${E3_REQUIRE_TOOLS}" \
-        EPICS_MODULES="${STAGING_DIR_HOST}/epics-modules" \
+        EPICS_MODULES="${EPICS_MODULES}" \
         MODULE=${E3_MODULE_NAME} \
         LIBVERSION=${PV}
 }
