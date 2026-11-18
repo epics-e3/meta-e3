@@ -33,8 +33,8 @@ epics_set_rpath() {
 }
 
 do_configure:append() {
-    mkdir -p ${STAGING_DIR_HOST}/epics/bin
-    ln -sfn ${STAGING_BINDIR_NATIVE} ${STAGING_DIR_HOST}/epics/bin/${EPICS_HOST_ARCH}
+    mkdir -p ${EPICS_BASE}/bin
+    ln -sfn ${STAGING_BINDIR_NATIVE} ${EPICS_BASE}/bin/${EPICS_HOST_ARCH}
 
     echo "EPICS_BASE=${EPICS_BASE}" >> ${S}/configure/RELEASE.local
     if [ "${PN}" != "pvxs" ]; then
