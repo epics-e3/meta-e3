@@ -15,7 +15,7 @@ inherit epics-module
 E3_REQUIRE_LOCATION = "/epics-modules/${PN}"
 
 FILES:${PN} += "/epics-modules ${sysconfdir}/epics"
-SYSROOT_DIRS += "/epics-modules/require3"
+SYSROOT_DIRS += "${E3_REQUIRE_LOCATION}"
 FILES:${PN} += "${libdir}/*.so"
 FILES:${PN}-dev:remove = "${libdir}/lib*.so"
 INSANE_SKIP:${PN} += "dev-so rpaths libdir"
@@ -32,7 +32,7 @@ do_compile() {
         RANLIB="${RANLIB}" \
         LD="${LD}" \
         LDFLAGS="${LDFLAGS}" \
-        INSTALL_LOCATION=${S}/epics-modules/${PN} \
+        INSTALL_LOCATION=${S}${E3_REQUIRE_LOCATION} \
         INSTALL_BIN=${S}/bin \
         INSTALL_SHRLIB=${S}/lib \
         INSTALL_INCLUDE=${S}/include
@@ -71,8 +71,8 @@ do_install() {
 E3_REQUIRE_VERSION=${PV}
 E3_REQUIRE_BIN=${bindir}
 E3_REQUIRE_LIB=${libdir}
-E3_REQUIRE_DB=/epics-modules/require3/db
-E3_REQUIRE_DBD=/epics-modules/require3/dbd
+E3_REQUIRE_DB=${E3_REQUIRE_LOCATION}/db
+E3_REQUIRE_DBD=${E3_REQUIRE_LOCATION}/dbd
 REQUIRE_MODULE_PATH=/epics-modules/
 EPICS_HOST_ARCH=${EPICS_TARGET_ARCH}
 EOF
