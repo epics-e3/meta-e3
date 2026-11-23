@@ -18,7 +18,6 @@ FILES:${PN} += "/epics-modules ${sysconfdir}/epics"
 SYSROOT_DIRS += "${E3_REQUIRE_LOCATION}"
 FILES:${PN} += "${libdir}/*.so"
 FILES:${PN}-dev:remove = "${libdir}/lib*.so"
-INSANE_SKIP:${PN} += "dev-so rpaths libdir"
 
 do_compile() {
     make ${PARALLEL_MAKE} \

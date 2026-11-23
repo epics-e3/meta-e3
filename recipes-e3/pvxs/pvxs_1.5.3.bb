@@ -16,7 +16,6 @@ inherit epics-module
 # copy, not a symlink) — both are needed at runtime by EPICS module builds.
 FILES:${PN} += "${libdir}/*.so ${sysconfdir}/epics /pvxs"
 FILES:${PN}-dev:remove = "${libdir}/lib*.so"
-INSANE_SKIP:${PN} += "dev-so rpaths"
 
 SYSROOT_DIRS += "/pvxs"
 
