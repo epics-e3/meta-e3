@@ -31,15 +31,7 @@ do_compile() {
     # This is kind of a workaround, EPICS configuration system was troublesome to define
     # specific variables. Doing it here will ensure they are not overwritten later.
     make ${PARALLEL_MAKE} SYSROOT=${STAGING_DIR_HOST} \
-        CC="${CC}" \
-        CCC="${CXX}" \
-        CMD_CFLAGS="${DEBUG_PREFIX_MAP}" \
-        CMD_CPPFLAGS="${DEBUG_PREFIX_MAP}" \
-        CMD_LDFLAGS="${DEBUG_PREFIX_MAP}" \
-        AR="${AR} -rc" \
-        RANLIB="${RANLIB}" \
-        LD="${LD}" \
-        LDFLAGS="${LDFLAGS}" \
+        DEBUG_PREFIX_MAP="${DEBUG_PREFIX_MAP}" \
         BUILD_ARCHS=${EPICS_TARGET_ARCH} \
         E3_REQUIRE_TOOLS="${E3_REQUIRE_TOOLS}" \
         EPICS_MODULES="${EPICS_MODULES}" \
