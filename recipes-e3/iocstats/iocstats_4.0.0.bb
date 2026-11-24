@@ -20,8 +20,6 @@ inherit e3
 
 E3_MODULE_NAME = "iocstats"
 
-INSANE_SKIP:${PN} += "dev-so rpaths"
-
 do_configure:append() {
     cp ${UNPACKDIR}/Makefile ${S}/Makefile
 

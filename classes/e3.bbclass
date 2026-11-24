@@ -6,8 +6,6 @@ FILES:${PN} += "/epics-modules/${E3_MODULE_NAME}"
 # require loads module libraries by their unversioned name.
 FILES:${PN} += "${libdir}/*.so"
 FILES:${PN}-dev:remove = "${libdir}/lib*.so"
-INSANE_SKIP:${PN} += "libdir dev-so"
-INSANE_SKIP:${PN}-dbg += "libdir"
 
 # EPICS version is needed for require in a environment variable.
 # The yocto build environment does not work as the conda environment,

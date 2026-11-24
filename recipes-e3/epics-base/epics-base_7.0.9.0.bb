@@ -35,7 +35,7 @@ FILES:${PN}-dev = ""
 FILES:${PN}-staticdev = ""
 
 # Skip QA checks that don't apply to a non-standard EPICS tree layout.
-INSANE_SKIP:${PN} += "dev-so libdir rpaths staticdev file-rdeps"
+INSANE_SKIP:${PN} += "dev-so staticdev file-rdeps"
 
 export PERL5LIB = "${STAGING_LIBDIR_NATIVE}/perl"
 
