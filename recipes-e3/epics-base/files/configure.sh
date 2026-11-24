@@ -24,8 +24,20 @@ POSIX_CFLAGS += -std=gnu17
 OP_SYS_LDFLAGS += -Wl,--disable-new-dtags -Wl,-rpath,${libdir} -Wl,-rpath,/epics/lib/\$(EPICS_HOST_ARCH) -Wl,-rpath-link,\$(SYSROOT)${libdir} -Wl,-rpath-link,\$(SYSROOT)/epics/lib/\$(EPICS_HOST_ARCH) -L\$(SYSROOT)${libdir}
 EOF
 
+# Replace the per-recipe  --sysroot path so the installed config
+# file resolves $(SYSROOT) to each recipe's own staging dir
+SYSROOT_CC=$(echo "${CC}" | sed 's# --sysroot=[^ ]*# --sysroot=$(SYSROOT)#g')
+SYSROOT_CXX=$(echo "${CXX}" | sed 's# --sysroot=[^ ]*# --sysroot=$(SYSROOT)#g')
+SYSROOT_LD=$(echo "${LD}" | sed 's# --sysroot=[^ ]*# --sysroot=$(SYSROOT)#g')
+
 cat <<EOF >>configure/os/CONFIG_SITE.linux-x86_64.${EPICS_TARGET_ARCH}
-# CC, AR, RANLIB, etc. come from the environment via make -e.
-# EPICS uses CCC for the C++ compiler; bridge it from the standard CXX env var.
-CCC=\$(CXX)
+CC=${SYSROOT_CC}
+CCC=${SYSROOT_CXX}
+CMD_CFLAGS=\$(DEBUG_PREFIX_MAP)
+CMD_CPPFLAGS=\$(DEBUG_PREFIX_MAP)
+CMD_LDFLAGS=\$(DEBUG_PREFIX_MAP)
+AR=${AR} -rc
+RANLIB=${RANLIB}
+LD=${SYSROOT_LD}
+LDFLAGS=${LDFLAGS}
 EOF

@@ -69,15 +69,7 @@ do_configure:append() {
 
 do_compile() {
     make ${PARALLEL_MAKE} SYSROOT=${STAGING_DIR_HOST} \
-        CC="${CC}" \
-        CCC="${CXX}" \
-        CMD_CFLAGS="${DEBUG_PREFIX_MAP}" \
-        CMD_CPPFLAGS="${DEBUG_PREFIX_MAP}" \
-        CMD_LDFLAGS="${DEBUG_PREFIX_MAP}" \
-        AR="${AR} -rc" \
-        RANLIB="${RANLIB}" \
-        LD="${LD}" \
-        LDFLAGS="${LDFLAGS}" \
+        DEBUG_PREFIX_MAP="${DEBUG_PREFIX_MAP}" \
         FINAL_LOCATION=/epics \
         IOCS_APPL_TOP=/epics
 }

@@ -21,16 +21,6 @@ FILES:${PN}-dev:remove = "${libdir}/lib*.so"
 
 do_compile() {
     make ${PARALLEL_MAKE} \
-        SYSROOT=${STAGING_DIR_HOST} \
-        CC="${CC}" \
-        CCC="${CXX}" \
-        CMD_CFLAGS="${DEBUG_PREFIX_MAP}" \
-        CMD_CPPFLAGS="${DEBUG_PREFIX_MAP}" \
-        CMD_LDFLAGS="${DEBUG_PREFIX_MAP}" \
-        AR="${AR} -rc" \
-        RANLIB="${RANLIB}" \
-        LD="${LD}" \
-        LDFLAGS="${LDFLAGS}" \
         INSTALL_LOCATION=${S}${E3_REQUIRE_LOCATION} \
         INSTALL_BIN=${S}/bin \
         INSTALL_SHRLIB=${S}/lib \
