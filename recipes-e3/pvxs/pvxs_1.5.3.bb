@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=3775480a712fc46a69647678acb234cb"
 DEPENDS += "libevent"
 
 SRC_URI = "git://github.com/epics-base/pvxs.git;branch=master;protocol=https;"
-SRCREV = "007ba4e000a1366259f71c494872bd5fd0dd5552"
+SRCREV = "25ca43df4db909c0b1a445fb705fc81582617625"
 PR = "r0"
 
 inherit epics-module
